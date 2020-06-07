@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+       <h:outputStylesheet library="css" name="bootstrap.css"/>
+
+    </h:head>
+    <h:body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h:dataTable styleClass="table" value="#{otelcontroller.clist}" var="otel">
+
+                               <h:column>
+
+                            <f:facet name="header"> Otel  ID     </f:facet>
+
+                    #{otel.otelid}
+
+                        </h:column>
+                        <h:column>
+
+                            <f:facet name="header"> Otel Ad    </f:facet>
+
+                    #{otel.ad}
+
+                        </h:column>
+                        <h:column>
+
+                            <f:facet name="header"> Otel Adres    </f:facet>
+
+
+                    #{otel.adres}
+
+                        </h:column>
+                            <h:column>
+
+                            <f:facet name="header"> Otel yildizi    </f:facet>
+
+
+                     #{otel.yildiz}
+
+                        </h:column>
+                        <h:column>
+
+                            <f:facet name="header"> DELETE  </f:facet>
+                            <h:form>
+
+                                <h:commandButton styleClass="btn btn-sm btn-danger" action="#{otelcontroller.delete(otel)}"  value="delete"/>
+
+                            </h:form>
+                        </h:column>
+
+
+
+                    </h:dataTable>
+
+                </div>
+
+                <div class ="col-md-6">
+
+                    <h:form>
+
+                        <div class =" form-group">
+                            <label for="inputname">     otel ID </label> 
+                            <h:inputText styleClass ="form-control"  value="#{otelcontroller.otel.otelid}"/>
+                            <label for="inputname">     otel Ad  </label> 
+                            <h:inputText styleClass="form-control" value="#{otelcontroller.otel.ad}"/>
+                             <label for="inputname">     otel  adres  </label> 
+                             <h:inputText styleClass="form-control" value="#{otelcontroller.otel.adres}"/>
+                                 <label for="inputname">     otel yildizi  </label> 
+                                 <h:inputText styleClass="form-control" value="#{otelcontroller.otel.yildiz}"/>
+                        </div>
+                        <div class =" form-group">
+                            <h:commandButton styleClass="btn btn-primary" value="create" action="#{otelcontroller.create}"/>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </h:body>
+
+</html>
+
