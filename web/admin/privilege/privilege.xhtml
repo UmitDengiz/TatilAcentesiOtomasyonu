@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/admin/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="col-md-12">
+                <h:form id="privilegee-table">
+                    <h:dataTable styleClass="table table-striped table-bordered" style="border-color: silver;border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px;" value="#{privilegeBean.modulePageList}" var="privilege">
+                        <f:facet name="header">
+                            <div class="text-center">
+                                <h:outputText class="text-info" value="İZİNLER KAYIT TABLOSU"/>
+                            </div>
+                        </f:facet>
+                        <h:column>
+                            <f:facet name="header">İzinler ID</f:facet>
+                                #{privilege.privilege_Id}                    
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Rol Adı</f:facet>                           
+                                #{privilege.role.role_Name}           
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Modül Adı</f:facet>                           
+                                #{privilege.p_Module}           
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">İzin Ekleme</f:facet>
+                            <h:commandLink rendered="#{privilege.yetki_C!=false}" action="#{privilegeBean.replace(privilege,'C')}">
+                                <span class=" btn-sm btn-success glyphicon glyphicon-ok "></span>
+                                <f:ajax execute="@this" render="@form"/>
+                            </h:commandLink>
+                            <h:commandLink rendered="#{privilege.yetki_C!=true}"  action="#{privilegeBean.replace(privilege,'C')}">
+                                <span class=" btn-sm btn-danger glyphicon glyphicon-remove "></span>
+                                <f:ajax execute="@this" render="@form"/>
+                            </h:commandLink>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">İzin Okuma</f:facet>
+                            <h:commandLink rendered="#{privilege.yetki_R!=false}" action="#{privilegeBean.replace(privilege,'R')}">
+                                <span class=" btn-sm btn-success glyphicon glyphicon-ok "></span>
+                                <f:ajax execute="@this" render="@form"/>
+                            </h:commandLink>
+                            <h:commandLink rendered="#{privilege.yetki_R!=true}"  action="#{privilegeBean.replace(privilege,'R')}">
+                                <span class=" btn-sm btn-danger glyphicon glyphicon-remove "></span>
+                                <f:ajax execute="@this" render="@form"/>
+                            </h:commandLink>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">İzin Güncelleme</f:facet>
+                            <h:commandLink rendered="#{privilege.yetki_U!=false}" action="#{privilegeBean.replace(privilege,'U')}">
+                                <span class=" btn-sm btn-success glyphicon glyphicon-ok "></span>
+                                <f:ajax execute="@this" render="@form"/>
+                            </h:commandLink>
+                            <h:commandLink rendered="#{privilege.yetki_U!=true}"  action="#{privilegeBean.replace(privilege,'U')}">
+                                <span class=" btn-sm btn-danger glyphicon glyphicon-remove "></span>
+                                <f:ajax execute="@this" render="@form"/>
+                            </h:commandLink>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">İzin Silme</f:facet>
+                            <h:commandLink rendered="#{privilege.yetki_D!=false}" action="#{privilegeBean.replace(privilege,'D')}">
+                                <span class=" btn-sm btn-success glyphicon glyphicon-ok "></span>
+                                <f:ajax execute="@this" render="@form"/>
+                            </h:commandLink>
+                            <h:commandLink rendered="#{privilege.yetki_D!=true}"  action="#{privilegeBean.replace(privilege,'D')}">
+                                <span class=" btn-sm btn-danger glyphicon glyphicon-remove "></span>
+                                <f:ajax execute="@this" render="@form"/>
+                            </h:commandLink>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Silme</f:facet>
+                            <h:commandLink onclick="$('#myModal').modal('show')"   action="#{privilegeBean.deleteConfirm(privilege)}">
+                                <span class=" btn-sm btn-danger glyphicon glyphicon-trash "></span>
+                                <f:ajax execute="@this" render="delete-modal"/>
+                            </h:commandLink> 
+                        </h:column>
+                        <f:facet name="footer">
+                            <div class="text-center">
+                                <h:form>
+                                    <div class="btn-group">
+                                        <h:commandButton action="#{privilegeBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                                            <f:ajax execute="@this" render="privilegee-table"/>
+                                        </h:commandButton>
+                                        <h:commandButton action="#{privilegeBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                                            <f:ajax execute="@this" render="privilegee-table"/>
+                                        </h:commandButton>
+                                    </div>
+                                </h:form>
+                            </div>
+                        </f:facet>
+                    </h:dataTable>
+                </h:form>
+
+            </div>
+            <div class="col-md-3">
+                <h:form id="privilegee-form">
+                    <div class="form-group">
+                        <h:inputHidden value="#{privilegeBean.module.privilege_Id}" />
+                        <label for="selectRolee" >Rol</label><br/>
+                        <h:selectOneMenu  id="selectRolee" value="#{privilegeBean.module.role}" styleClass="form-control" converter="roleConverter">
+                            <f:selectItems value="#{privilegeBean.roleBean.moduleList}" var="Role" itemValue="#{Role}" itemLabel="#{Role.role_Name}"/>
+                        </h:selectOneMenu >
+                        <br/>
+                        <label>Modül</label><br/>
+                        <h:selectOneMenu  id="roles" value="#{privilegeBean.module.p_Module}" styleClass="form-control" >
+                            <f:selectItem  itemValue="Bilet" itemLabel="Bilet"/>
+                            <f:selectItem  itemValue="Dosya" itemLabel="Dosya"/>
+                            <f:selectItem  itemValue="Kampanya" itemLabel="Kampanya"/>
+                            <f:selectItem  itemValue="Otel" itemLabel="Otel"/>
+                            <f:selectItem  itemValue="Ozellik" itemLabel="Özellik"/>
+                            <f:selectItem  itemValue="Privilige" itemLabel="İzinler"/>
+                            <f:selectItem  itemValue="Rezervasyon" itemLabel="Rezervasyon"/>
+                            <f:selectItem  itemValue="Role" itemLabel="Rol"/>
+                            <f:selectItem  itemValue="Tur" itemLabel="Tur"/>
+                            <f:selectItem  itemValue="User" itemLabel="Kullanıcı"/>
+                            <f:selectItem  itemValue="Yorum" itemLabel="Yorum"/>
+                        </h:selectOneMenu >
+                        <br/>
+
+                        <label for="inputName" >Yetki Ekleme</label>
+                        <h:selectOneMenu   value="#{privilegeBean.module.yetki_C}" styleClass="form-control" >
+                            <f:selectItem  itemValue="true" itemLabel="Var"/>
+                            <f:selectItem  itemValue="false" itemLabel="Yok"/>
+                        </h:selectOneMenu >
+                        <br/>
+                        <label for="inputName" >Yetki Okuma</label>
+                        <h:selectOneMenu   value="#{privilegeBean.module.yetki_R}" styleClass="form-control" >
+                            <f:selectItem  itemValue="true" itemLabel="Var"/>
+                            <f:selectItem  itemValue="false" itemLabel="Yok"/>
+                        </h:selectOneMenu >
+                        <br/>
+                        <label for="inputName" >Yetki Güncelleme</label>
+                        <h:selectOneMenu   value="#{privilegeBean.module.yetki_U}" styleClass="form-control" >
+                            <f:selectItem  itemValue="true" itemLabel="Var"/>
+                            <f:selectItem  itemValue="false" itemLabel="Yok"/>
+                        </h:selectOneMenu >
+                        <br/>
+                        <label for="inputName" >Yetki Silme</label>
+                        <h:selectOneMenu   value="#{privilegeBean.module.yetki_D}" styleClass="form-control" >
+                            <f:selectItem  itemValue="true" itemLabel="Var"/>
+                            <f:selectItem  itemValue="false" itemLabel="Yok"/>
+                        </h:selectOneMenu >
+                    </div>
+                    <div class="form-group">
+                        <h:commandButton rendered="#{privilegeBean.module.privilege_Id == null}" styleClass="btn btn-primary btn-block" value="Ekle" action="#{privilegeBean.create()}">
+                            <f:ajax execute="privilegee-form" render="privilegee-form privilegee-table"/>
+                        </h:commandButton>
+                        <h:commandButton rendered="#{privilegeBean.module.privilege_Id != null}"  styleClass="btn btn-secondary btn-block" value="Form Temizle" action="#{privilegeBean.clearForm()}">
+                            <f:ajax execute="@this" render="privilegee-form"/>
+                        </h:commandButton>
+                    </div>
+                </h:form>
+            </div>
+            <div id="myModal" class="modal" tabindex="-1" likes="dialog">
+                <div class="modal-dialog" likes="document">
+                    <h:form id="delete-modal" >
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Silme Onay İşlemi</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p>
+                                    Bu izin nesnesini silmek istediğinizden emin misiniz? <br />
+                                    <b>İzinler ID : </b>#{privilegeBean.module.privilege_Id}<br />
+                                    <b>Modül Adı : </b>#{privilegeBean.module.p_Module}<br />
+                                    <b>Yetki Ekleme: </b>#{privilegeBean.module.yetki_C? "Var":"Yok"}<br />
+                                    <b>Yetki Okuma: </b>#{privilegeBean.module.yetki_R? "Var":"Yok"}<br />
+                                    <b>Yetki Güncelleme: </b>#{privilegeBean.module.yetki_U? "Var":"Yok"}<br />
+                                    <b>Yetki Silme: </b>#{privilegeBean.module.yetki_D? "Var":"Yok"}<br />
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="btn-group">
+                                    <h:form >
+                                        <h:commandButton onclick="$('#myModal').modal('hide')" action="#{privilegeBean.delete()}" value="Onayla" styleClass="btn btn-danger">
+                                            <f:ajax execute="privilegee-form" render="privilegee-form privilegee-table"/>
+                                        </h:commandButton> 
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                                    </h:form>
+                                </div>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </h:form>
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+        </div>
+    </ui:define>
+</ui:composition>

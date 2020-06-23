@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/admin/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h:form id="kampanya-table">
+                        <h:dataTable style="border-color: silver;border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px;" styleClass="table table-striped table-bordered" value="#{kampanyaBean.modulePageList}" var="kampanya">
+                            <f:facet name="header">
+                                <div class="text-center">
+                                    <h:outputText class="text-info" value="KAMPANYA KAYIT TABLOSU"/>
+                                </div>
+                            </f:facet>
+                            <h:column>
+                                <f:facet name="header">Kampanya ID</f:facet>
+                                    #{kampanya.kampanya_id}                    
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Kampanya Adı</f:facet>
+                                <h:commandLink action="#{kampanyaBean.updateForm(kampanya)}" value="#{kampanya.kampanya_adi}">
+                                    <f:ajax execute="@this" render="kampanya-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Kampanya Tür</f:facet>
+                                <h:commandLink action="#{kampanyaBean.updateForm(kampanya)}" value="#{kampanya.tur}">
+                                    <f:ajax execute="@this" render="kampanya-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Kampanya Ücret</f:facet>
+                                <h:commandLink action="#{kampanyaBean.updateForm(kampanya)}" value="#{kampanya.ucret}">
+                                    <f:ajax execute="@this" render="kampanya-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Silme</f:facet>
+                                <h:commandButton onclick="$('#myModal').modal('show')"  styleClass="btn btn-sm btn-danger" action="#{kampanyaBean.deleteConfirm(kampanya)}" value="SİL">
+                                    <f:ajax execute="@this" render="delete-modal"/>
+                                </h:commandButton> 
+                            </h:column>
+                            <f:facet name="footer">
+                                <div class="text-center">
+                                    <h:form>
+                                        <div class="btn-group">
+                                            <h:commandButton action="#{kampanyaBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="kampanya-table"/>
+                                            </h:commandButton>
+                                            <h:commandButton action="#{kampanyaBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="kampanya-table"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </f:facet>
+                        </h:dataTable>
+                    </h:form> 
+                </div>
+                <div class="col-md-4">
+                    <h:form id="kampanya-form">
+                        <div class="form-group">
+                            <h:inputHidden value="#{kampanyaBean.module.kampanya_id}" />
+                            <label for="inputName" >Kampanya Adı</label>
+                            <h:inputTextarea cols="10" rows="4" styleClass="form-control" value="#{kampanyaBean.module.kampanya_adi}"/>
+                            <br/>
+                            <label for="inputName" >Kampanya Tür</label>
+                            <h:inputText styleClass="form-control" value="#{kampanyaBean.module.tur}"/>
+                            <br/>
+                            <label for="inputName" >Kampanya Ücret</label>
+                            <h:inputText  styleClass="form-control" value="#{kampanyaBean.module.ucret}"/>
+                        </div>
+                        <div class="form-group">
+                            <h:commandButton rendered="#{kampanyaBean.module.kampanya_id != null}"  styleClass="btn btn-info btn-block" value="Güncelle" action="#{kampanyaBean.update()}">
+                                <f:ajax execute="kampanya-form" render="kampanya-form kampanya-table"/>
+                            </h:commandButton>
+                            <h:commandButton rendered="#{kampanyaBean.module.kampanya_id == null}" styleClass="btn btn-primary btn-block " value="Ekle" action="#{kampanyaBean.create()}">
+                                <f:ajax execute="kampanya-form" render="kampanya-form kampanya-table"/>
+                            </h:commandButton>
+                            <h:commandButton rendered="#{kampanyaBean.module.kampanya_id != null}"  styleClass="btn btn-success btn-block" value="Form Temizle" action="#{kampanyaBean.clearForm()}">
+                                <f:ajax execute="@this" render="kampanya-form"/>
+                            </h:commandButton>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div id="myModal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <h:form id="delete-modal" >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Silme Onay İşlemi</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Bu kampanya nesnesini silmek istediğinizden emin misiniz? <br />
+                                        <b>Kampanya ID : </b>#{kampanyaBean.module.kampanya_id}<br />
+                                        <b>Kampanya Adı :</b>#{kampanyaBean.module.kampanya_adi}<br />
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-group">                                   
+                                        <h:commandButton onclick="$('#myModal').modal('hide')" action="#{kampanyaBean.delete()}" value="Onayla" styleClass="btn btn-danger">
+                                            <f:ajax execute="@this" render="kampanya-table kampanya-form"/>
+                                        </h:commandButton> 
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>                      
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </h:form>
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+

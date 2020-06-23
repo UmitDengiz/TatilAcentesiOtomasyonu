@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/frontend/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough">    
+
+    <ui:define name="content" >
+        <div class ="container">
+            <div class="row">
+                <h:form rendered="#{frontendKampanyaBean.module.kampanya_id!=null }"  id="fkampanya-detail">
+                    <div class="col-sm-6 col-md-6">
+                        <h2 class="text-info" style="border-width: 3rem;border-color: #0275d8;border-left: solid;padding-left: 0.5rem;">Kampanya Bilgi</h2>
+                      
+                        
+                        <b><h3 class="text-center">#{frontendKampanyaBean.module.tur} </h3>  </b>
+                        <br/>
+                        <b><h4>Kampanya Adı: </h4></b><p>#{frontendKampanyaBean.module.kampanya_adi}</p><br/>
+                        <b><h4>Kampanya İndirimi: </h4></b><p class="form-control">#{frontendKampanyaBean.module.ucret} TL</p>
+                        <br/>
+                        <div class="form-group">        
+                            <h:commandButton rendered="#{user.id!=null}"  styleClass="btn btn-success btn-block" value="Anında Katıl" action="#{frontendKampanyaBean.createKampanya(user)}">
+                                <f:ajax execute="@form" render="@form fkampanya-detail"/>
+                            </h:commandButton>
+                        </div>
+                    </div>
+                </h:form>
+            </div>               
+        </div>
+    </ui:define>
+</ui:composition>

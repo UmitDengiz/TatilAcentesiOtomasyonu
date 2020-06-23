@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/admin/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h:form id="ozellik-table">
+                        <h:dataTable style="border-color: silver;border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px;" styleClass="table table-striped table-bordered" value="#{ozellikBean.modulePageList}" var="ozellik">
+                            <f:facet name="header">
+                                <div class="text-center">
+                                    <h:outputText class="text-info" value="ÖZELLİK KAYIT TABLOSU"/>
+                                </div>
+                            </f:facet>
+                            <h:column>
+                                <f:facet name="header">Özellik ID</f:facet>
+                                    #{ozellik.ozellik_id}                    
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Özellik Adı</f:facet>
+                                <h:commandLink action="#{ozellikBean.updateForm(ozellik)}" value="#{ozellik.ozellik_adi}">
+                                    <f:ajax execute="@this" render="ozellik-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Oteller</f:facet>
+                                <ui:repeat value="#{ozellik.oteller}" var="otel">
+                                    <li style="margin-left: 1rem">#{otel.name}</li>
+                                </ui:repeat>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Silme</f:facet>
+                                <h:commandButton onclick="$('#myModal').modal('show')"  styleClass="btn btn-sm btn-danger" action="#{ozellikBean.deleteConfirm(ozellik)}" value="SİL">
+                                    <f:ajax execute="@this" render="delete-modal"/>
+                                </h:commandButton> 
+                            </h:column>
+                            <f:facet name="footer">
+                                <div class="text-center">
+                                    <h:form>
+                                        <div class="btn-group">
+                                            <h:commandButton action="#{ozellikBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="ozellik-table"/>
+                                            </h:commandButton>
+                                            <h:commandButton action="#{ozellikBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="ozellik-table"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </f:facet>
+                        </h:dataTable>
+                    </h:form> 
+                </div>
+                <div class="col-md-4">
+                    <h:form id="ozellik-form">
+                        <div class="form-group">
+                            <h:inputHidden value="#{ozellikBean.module.ozellik_id}" />
+                            <label for="inputName" >Özellik Adı</label>
+                            <h:inputText styleClass="form-control" value="#{ozellikBean.module.ozellik_adi}"/>
+                            <label>Oteller</label> 
+                            <h:selectManyListbox  styleClass="form-control"  value="#{ozellikBean.module.oteller}" converter="otelConverter">
+                                <f:selectItems value="#{ozellikBean.otelBean.moduleList}" var="Otel" itemValue="#{Otel}" itemLabel="#{Otel.name}" />
+                            </h:selectManyListbox>
+                            <br/>
+                        </div>
+                        <div class="form-group">
+                                <h:commandButton rendered="#{ozellikBean.module.ozellik_id != null}"  styleClass="btn btn-info btn-block" value="Güncelle" action="#{ozellikBean.update()}">
+                                    <f:ajax execute="ozellik-form" render="ozellik-form ozellik-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{ozellikBean.module.ozellik_id == null}" styleClass="btn btn-primary btn-block" value="Ekle" action="#{ozellikBean.create()}">
+                                    <f:ajax execute="ozellik-form" render="ozellik-form ozellik-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{ozellikBean.module.ozellik_id != null}"  styleClass="btn btn-success btn-block" value="Form Temizle" action="#{ozellikBean.clearForm()}">
+                                    <f:ajax execute="@this" render="ozellik-form"/>
+                                </h:commandButton>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div id="myModal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <h:form id="delete-modal" >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Silme Onay İşlemi</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Bu Özellik nesnesini silmek istediğinizden emin misiniz? <br />
+                                        <b>Özellik ID : </b>#{ozellikBean.module.ozellik_id}<br />
+                                        <b>Özellik Adı :</b>#{ozellikBean.module.ozellik_adi}<br />
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-group">                                   
+                                        <h:commandButton onclick="$('#myModal').modal('hide')" action="#{ozellikBean.delete()}" value="Onayla" styleClass="btn btn-danger">
+                                            <f:ajax execute="@this" render="ozellik-table ozellik-form"/>
+                                        </h:commandButton> 
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>                      
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </h:form>
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+

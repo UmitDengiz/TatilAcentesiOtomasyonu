@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/admin/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h:form id="yorum-table">
+                        <h:dataTable style="border-color: silver;border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px;" styleClass="table table-striped table-bordered" value="#{yorumBean.modulePageList}" var="yorum">
+                            <f:facet name="header">
+                                <div class="text-center">
+                                    <h:outputText class="text-info" value="YORUM KAYIT TABLOSU"/>
+                                </div>
+                            </f:facet>
+                            <h:column>
+                                <f:facet name="header">Yorum</f:facet>
+                                <h:commandLink action="#{yorumBean.updateForm(yorum)}" value="#{yorum.yorumunuz}">
+                                    <f:ajax execute="@this" render="yorum-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Otel Adı</f:facet>
+                                <h:commandLink action="#{yorumBean.updateForm(yorum)}" value="#{yorum.otel.name}">
+                                    <f:ajax execute="@this" render="yorum-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Kullanıcı Adı</f:facet>
+                                <h:commandLink action="#{yorumBean.updateForm(yorum)}" value="#{yorum.user.name_Surname}">
+                                    <f:ajax execute="@this" render="yorum-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Silme</f:facet>
+                                <h:commandButton onclick="$('#myModal').modal('show')"  styleClass="btn btn-sm btn-danger" action="#{yorumBean.deleteConfirm(yorum)}" value="SİL">
+                                    <f:ajax execute="@this" render="delete-modal"/>
+                                </h:commandButton> 
+                            </h:column>
+                            <f:facet name="footer">
+                                <div class="text-center">
+                                    <h:form>
+                                        <div class="btn-group">
+                                            <h:commandButton action="#{yorumBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="yorum-table"/>
+                                            </h:commandButton>
+                                            <h:commandButton action="#{yorumBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="yorum-table"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </f:facet>
+                        </h:dataTable>
+                    </h:form> 
+                </div>
+                <div class="col-md-4">
+                    <h:form id="yorum-form">
+                        <div class="form-group">
+                            <h:inputHidden value="#{yorumBean.module.yorum_id}" />
+                            <label for="inputName" >Yorumunuz</label>
+                            <h:inputTextarea cols="10" rows="3" styleClass="form-control" value="#{yorumBean.module.yorumunuz}"/>
+                            <br/>
+                            <label for="selectOtel" >Otel Seçiniz</label><br/>
+                            <h:selectOneMenu  id="selectOtel" value="#{yorumBean.module.otel}" styleClass="form-control" converter="otelConverter">
+                                <f:selectItems value="#{yorumBean.otelBean.moduleList}" var="Otel" itemValue="#{Otel}" itemLabel="#{Otel.name}"/>
+                            </h:selectOneMenu >
+                            <br/>
+                            <label for="SelectedUser" >Kullanıcı Seçiniz</label><br/>
+                            <h:selectOneMenu  id="SelectedUser" value="#{yorumBean.module.user}" styleClass="form-control" converter="userConverter">
+                                <f:selectItems value="#{yorumBean.userBean.moduleList}" var="User" itemValue="#{User}" itemLabel="#{User.name_Surname}"/>
+                            </h:selectOneMenu >
+                        </div>
+                        <div class="form-group">
+                                <h:commandButton rendered="#{yorumBean.module.yorum_id != null}"  styleClass="btn btn-info btn-block" value="Güncelle" action="#{yorumBean.update()}">
+                                    <f:ajax execute="yorum-form" render="yorum-form yorum-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{yorumBean.module.yorum_id == null}" styleClass="btn btn-primary btn-block " value="Ekle" action="#{yorumBean.create()}">
+                                    <f:ajax execute="yorum-form" render="yorum-form yorum-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{yorumBean.module.yorum_id != null}"  styleClass="btn btn-success btn-block" value="Form Temizle" action="#{yorumBean.clearForm()}">
+                                    <f:ajax execute="@this" render="yorum-form"/>
+                                </h:commandButton>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div id="myModal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <h:form id="delete-modal" >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Silme Onay İşlemi</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Bu yorum nesnesini silmek istediğinizden emin misiniz? <br />
+                                        <b>Yorum ID : </b>#{yorumBean.module.yorum_id}<br />
+                                        <b>Yorum Adı :</b>#{yorumBean.module.yorumunuz}<br />
+                                        <b>Otel Adı :</b>#{yorumBean.module.otel.name}<br />
+                                        <b>Kullanıcı Adı :</b>#{yorumBean.module.user.name_Surname}<br />
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-group">                                   
+                                        <h:commandButton onclick="$('#myModal').modal('hide')" action="#{yorumBean.delete()}" value="Onayla" styleClass="btn btn-danger">
+                                            <f:ajax execute="@this" render="yorum-table yorum-form"/>
+                                        </h:commandButton> 
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>                      
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </h:form>
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+

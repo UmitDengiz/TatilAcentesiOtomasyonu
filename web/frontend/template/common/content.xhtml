@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"> 
+
+    <div class ="container">
+        <div class="row">
+            <h1 class="text-primary" style="border-width: 3rem;border-color: #0275d8;border-left: solid;padding-left: 0.5rem;margin-left: 1.5rem">Oteller</h1>
+            <h:form enctype="multipart/form-data" id="fotel-table" >
+                <ui:repeat value="#{frontendOtelBean.otelPageList}" var="otel">
+                    <div class="col-md-4 col-lg-4">
+                        <div class="panel panel-primary" >
+                            <h:panelGroup  rendered="#{otel.dosya.type.contains('image')}">
+                                <h:graphicImage value="image/#{otel.dosya.name}"  width="100%" height="200rem"/>
+                            </h:panelGroup>    
+                            <div class="panel-heading">
+                                <h:commandLink styleClass="btn-link" action="#{frontendOtelBean.updateOtel(otel)}" style="color: #ffffff" value="#{frontendOtelBean.stringControl(otel.name)}"/>                                         
+                            </div>
+                        </div>    
+                    </div>                    
+                </ui:repeat>                  
+            </h:form>
+            <h:form id='fotel-sayfa' >
+                <div class='text-center' style="margin-bottom: 5rem;">
+                    <div class="btn-group">
+                        <h:commandButton  action="#{frontendOtelBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-primary">
+                            <f:ajax execute="@this" render="fotel-table"/>
+                        </h:commandButton>
+                        <h:commandButton action="#{frontendOtelBean.next()}" value="SONRAKİ" styleClass="btn btn-primary">
+                            <f:ajax execute="@this" render="fotel-table"/>
+                        </h:commandButton>
+                    </div>
+                </div>
+            </h:form>
+        </div>   
+
+        <div class="row">
+            <h1 class="text-success" style="border-width: 3rem;border-color: #0275d8;border-left: solid;padding-left: 0.5rem;margin-left: 1.5rem">Turlar</h1>
+            <h:form enctype="multipart/form-data" id="ftur-table">
+                <ui:repeat value="#{frontendTurBean.turPageList}" var="tur">
+                    <div class="col-md-4 col-lg-4">
+                        <div class="panel" style="background-color: green">
+                            <div class="panel-heading" >
+                                <h:commandLink styleClass="btn-link text-success" action="#{frontendTurBean.updateTur(tur)}" style="color: #ffffff" value="#{frontendTurBean.stringControl(tur.guzergah)}"/>                                           
+                            </div>
+                            <h:panelGroup  rendered="#{tur.dosya.type.contains('image')}">
+                                <h:graphicImage value="image/#{tur.dosya.name}"  width="100%" height="200rem"/>
+                            </h:panelGroup>                                                       
+                        </div>    
+                    </div>                    
+                </ui:repeat>                  
+            </h:form>
+            <h:form id='ftur-sayfa' >
+                <div class='text-center' style="margin-bottom: 5rem;">
+                    <div class="btn-group">
+                        <h:commandButton  action="#{frontendTurBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-success">
+                            <f:ajax execute="@this" render="ftur-table"/>
+                        </h:commandButton>
+                        <h:commandButton action="#{frontendTurBean.next()}" value="SONRAKİ" styleClass="btn btn-success">
+                            <f:ajax execute="@this" render="ftur-table"/>
+                        </h:commandButton>
+                    </div>
+                </div>
+            </h:form>
+        </div> 
+
+        <div class="row">
+            <h1 class="text-info" style="border-width: 3rem;border-color: #0275d8;border-left: solid;padding-left: 0.5rem;margin-left: 1.5rem">Kampanyalar</h1>
+            <h:form id='ftur-kampanya' >
+                <ui:repeat value="#{frontendKampanyaBean.modulePageList}" var="kampanya">
+                    <div class="col-md-4 col-lg-4">
+                        <div class="card">
+                            <div class="card-header">                              
+                                <h:commandLink  action="#{frontendKampanyaBean.updateKampanya(kampanya)}"  value="#{kampanya.tur}"/>                                           
+                            </div>
+                            <div class="card-body">
+                                <blockquote class="blockquote mb-0">
+                                    <p>#{kampanya.kampanya_adi}</p>
+                                    <footer class="blockquote-footer">Kampanya İndirimi: <cite title="Source Title">#{kampanya.ucret} TL</cite></footer>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                </ui:repeat>
+            </h:form>
+            <h:form id='ftur-kampanya_pag' >
+                <div class='text-center' style="margin-bottom: 5rem;">
+                    <div class="btn-group">
+                        <h:commandButton  action="#{frontendKampanyaBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                            <f:ajax execute="@this" render="ftur-kampanya"/>
+                        </h:commandButton>
+                        <h:commandButton action="#{frontendKampanyaBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                            <f:ajax execute="@this" render="ftur-kampanya"/>
+                        </h:commandButton>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </div>
+</ui:composition>

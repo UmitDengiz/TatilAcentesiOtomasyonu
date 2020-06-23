@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/frontend/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough">    
+
+    <ui:define name="content" >
+        <div class ="container">
+            <div class="row">
+                <h:form rendered="#{frontendTurBean.tur.tur_id!=null }" enctype="multipart/form-data" id="ftur-detail">
+                    <div class="col-sm-6 col-md-6">
+                        <div class="panel">
+                            <h:panelGroup  rendered="#{frontendTurBean.tur.dosya.type.contains('image')}">
+                                <h:graphicImage value="image/#{frontendTurBean.tur.dosya.name}" class="img-thumbnail" width="100%" height="300"/>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-6">
+                        <h2 class="text-success" style="border-width: 3rem;border-color: #0275d8;border-left: solid;padding-left: 0.5rem;">Tur Bilgi</h2>
+                        <b><h4>Güzergah: </h4></b><p class="form-control">#{frontendTurBean.tur.guzergah}</p>
+                        <b><h4>Tarih: </h4></b><p class="form-control">#{frontendTurBean.tur.bas_tarih} ile #{frontendTurBean.tur.son_tarih} arasında</p>
+                        <b><h4>Fiyat: </h4></b><p class="form-control">#{frontendTurBean.tur.ucret} TL</p>
+                        <br/>
+
+                        <h:form rendered="#{user.id!=null}">
+                            <h2 class="text-success" style="border-width: 3rem;border-color: #0275d8;border-left: solid;padding-left: 0.5rem;">Rezervasyon Kayıt</h2>
+
+                            <div class="form-group"> 
+                                <label for="inputName" >Tarih</label>
+                                <h:inputText value="#{frontendTurBean.rezervasyon.tarih}" styleClass="form-control" a:placeholder="yyyy-MM-dd" >
+                                    <f:convertDateTime pattern="yyyy-MM-dd"/>  
+                                </h:inputText>
+                            </div>
+                            <div class="form-group">        
+                                <h:commandButton  styleClass="btn btn-success btn-block" value="Ekle" action="#{frontendTurBean.createRezervasyon(user)}">
+                                    <f:ajax execute="@form" render="@form ftur-detail"/>
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </h:form>
+            </div>               
+        </div>
+    </ui:define>
+</ui:composition>

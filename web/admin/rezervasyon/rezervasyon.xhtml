@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/admin/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:define name="content">
+        <div class="container-fluid" style="margin-left: 5rem;margin-right: 5rem;">
+            <div class="row">
+                <div class="col-md-12">
+                    <h:form id="rezervasyon-table">
+                        <h:dataTable style="border-color: silver;border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px;" styleClass="table table-striped table-bordered" value="#{rezervasyonBean.modulePageList}" var="rezervasyon">
+                            <f:facet name="header">
+                                <div class="text-center">
+                                    <h:outputText class="text-info" value="REZERVASYON KAYIT TABLOSU"/>
+                                </div>
+                            </f:facet>
+                            <h:column>
+                                <f:facet name="header">Tarih</f:facet>
+                                <h:commandLink action="#{rezervasyonBean.updateForm(rezervasyon)}" value="#{rezervasyon.tarih}">
+                                    <f:ajax execute="@this" render="rezervasyon-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Müşteri Ad &amp; Soyad</f:facet>
+                                <h:commandLink action="#{rezervasyonBean.updateForm(rezervasyon)}" value="#{rezervasyon.user.name_Surname}">
+                                    <f:ajax execute="@this" render="rezervasyon-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Tur Bilgi</f:facet>
+                                <h:commandLink action="#{rezervasyonBean.updateForm(rezervasyon)}" value="Tarihler : #{rezervasyon.tur.bas_tarih} | #{rezervasyon.tur.son_tarih} &nbsp;&nbsp; #{rezervasyon.tur.guzergah}">
+                                    <f:ajax execute="@this" render="rezervasyon-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Silme</f:facet>
+                                <h:commandButton onclick="$('#myModal').modal('show')"  styleClass="btn btn-sm btn-danger" action="#{rezervasyonBean.deleteConfirm(rezervasyon)}" value="SİL">
+                                    <f:ajax execute="@this" render="delete-modal"/>
+                                </h:commandButton> 
+                            </h:column>
+                            <f:facet name="footer">
+                                <div class="text-center">
+                                    <h:form>          
+                                        <div class="btn-group">
+                                            <h:commandButton action="#{rezervasyonBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="rezervasyon-table"/>
+                                            </h:commandButton>
+                                            <h:commandButton action="#{rezervasyonBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="rezervasyon-table"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </f:facet>
+                        </h:dataTable>
+                    </h:form> 
+                </div>
+                <div class="col-md-5">
+                    <h:form id="rezervasyon-form">
+                        <div class="form-group">
+                            <h:inputHidden value="#{rezervasyonBean.module.rezervasyon_id}" />
+                            <label for="SelectedRole" >Kullanıcı</label><br/>
+                            <h:selectOneMenu  id="selectUser" value="#{rezervasyonBean.module.user}" styleClass="form-control" converter="userConverter">
+                                <f:selectItems value="#{rezervasyonBean.userBean.moduleList}" var="User" itemValue="#{User}" itemLabel="#{User.name_Surname}"/>
+                            </h:selectOneMenu >
+                            <br/>
+                            <label for="SelectedRole" >Tur</label><br/>
+                            <h:selectOneMenu  id="selectTur" value="#{rezervasyonBean.module.tur}" styleClass="form-control" converter="turConverter">
+                                <f:selectItems value="#{rezervasyonBean.turBean.moduleList}" var="Tur" itemValue="#{Tur}" itemLabel="Tarihler : #{Tur.bas_tarih} | #{Tur.son_tarih} &nbsp;&nbsp; Güzergah : #{Tur.guzergah}"/>
+                            </h:selectOneMenu >
+                            <br/>
+                            <label for="inputName" >Rezervasyon Tarih</label>
+                            <h:inputText value="#{rezervasyonBean.module.tarih}" styleClass="form-control" a:placeholder="yyyy-MM-dd" >
+                                <f:convertDateTime pattern="yyyy-MM-dd"/>  
+                            </h:inputText>
+                        </div>
+                        <div class="form-group">        
+                            <h:commandButton rendered="#{rezervasyonBean.module.rezervasyon_id != null}"  styleClass="btn btn-info btn-block" value="Güncelle" action="#{rezervasyonBean.update()}">
+                                <f:ajax execute="rezervasyon-form" render="rezervasyon-form rezervasyon-table"/>
+                            </h:commandButton>
+                            <h:commandButton rendered="#{rezervasyonBean.module.rezervasyon_id == null}" styleClass="btn btn-primary btn-block" value="Ekle" action="#{rezervasyonBean.create()}">
+                                <f:ajax execute="rezervasyon-form" render="rezervasyon-form rezervasyon-table"/>
+                            </h:commandButton>
+                            <h:commandButton rendered="#{rezervasyonBean.module.rezervasyon_id != null}"  styleClass="btn btn-success btn-block" value="Form Temizle" action="#{rezervasyonBean.clearForm()}">
+                                <f:ajax execute="@this" render="rezervasyon-form"/>
+                            </h:commandButton>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div id="myModal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <h:form id="delete-modal" >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Silme Onay İşlemi</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Bu rezervasyon nesnesini silmek istediğinizden emin misiniz? <br />
+                                        <b>Rezervasyon ID : </b>#{rezervasyonBean.module.rezervasyon_id}<br />
+                                        <b>Kullanıcı Adı :</b>#{rezervasyonBean.module.user.name_Surname}<br />
+                                        <b>Tur Güzergah :</b>#{rezervasyonBean.module.tur.guzergah}<br />
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-group">                                   
+                                        <h:commandButton onclick="$('#myModal').modal('hide')" action="#{rezervasyonBean.delete()}" value="Onayla" styleClass="btn btn-danger">
+                                            <f:ajax execute="@this" render="rezervasyon-table rezervasyon-form"/>
+                                        </h:commandButton> 
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>                      
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </h:form>
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/admin/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h:form id="otel-table" enctype="multipart/form-data">
+                        <h:dataTable style="border-color: silver;border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px;" styleClass="table table-striped table-bordered" value="#{otelBean.modulePageList}" var="otel">
+                             <f:facet name="header">
+                                <div class="text-center">
+                                    <h:outputText class="text-info" value="OTEL KAYIT TABLOSU"/>
+                                </div>
+                            </f:facet>
+                            <h:column>
+                                <f:facet name="header">Otel Adı</f:facet>
+                                <h:commandLink action="#{otelBean.updateForm(otel)}" value="#{otel.name}">
+                                    <f:ajax execute="@this" render="otel-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Adres</f:facet>
+                                <h:commandLink action="#{otelBean.updateForm(otel)}" value="#{otel.address}">
+                                    <f:ajax execute="@this" render="otel-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Özellikler</f:facet>
+                                <ui:repeat value="#{otel.otelOzellikler}" var="ozellik">
+                                    <li style="margin-left: 1rem">#{ozellik.ozellik_adi}</li>
+                                </ui:repeat>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Yorumlar</f:facet>
+                                <ui:repeat value="#{otel.otelYorumlar}" var="yorum">
+                                    <li style="margin-left: 1rem"><b>#{yorum.user.name_Surname}: </b>#{yorum.yorumunuz} </li>
+                                </ui:repeat>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Resim </f:facet>
+                                <h:panelGroup  rendered="#{otel.dosya.type.contains('image')}">
+                                    <h:graphicImage value="image/#{otel.dosya.name}" width="50" height="50"/>
+                                </h:panelGroup>               
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Silme</f:facet>
+                                <h:commandButton onclick="$('#myModal').modal('show')"  styleClass="btn btn-sm btn-danger" action="#{otelBean.deleteConfirm(otel)}" value="SİL">
+                                    <f:ajax execute="@this" render="delete-modal"/>
+                                </h:commandButton> 
+                            </h:column>
+                            <f:facet name="footer">
+                                <div class="text-center">
+                                    <h:form>
+                                        <div class="btn-group">
+                                            <h:commandButton action="#{otelBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="otel-table"/>
+                                            </h:commandButton>
+                                            <h:commandButton action="#{otelBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="otel-table"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </f:facet>
+                        </h:dataTable>
+                    </h:form> 
+                </div>
+                <div class="col-md-3">
+                    <h:form id="otel-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <h:inputHidden value="#{otelBean.module.otel_id}" />
+                            <label for="inputName" >Otel Adı</label>
+                            <h:inputText styleClass="form-control" value="#{otelBean.module.name}"/>
+                            <br/>
+                            <label for="inputName" >Otel Adres</label>
+                            <h:inputText styleClass="form-control" value="#{otelBean.module.address}"/>
+                            <br/>
+                            <label>Özellikler</label> 
+                            <h:selectManyListbox  styleClass="form-control"  value="#{otelBean.module.otelOzellikler}" converter="ozellikConverter">
+                                <f:selectItems value="#{otelBean.ozellikBean.moduleList}" var="Ozellik" itemValue="#{Ozellik}" itemLabel="#{Ozellik.ozellik_adi}" />
+                            </h:selectManyListbox>
+                            <br/>
+                            <label for="selectResim" >Otel Resmi</label>
+                            <h:inputFile value="#{otelBean.part}" styleClass="form-control"/> 
+                        </div>
+                        <div class="form-group">
+                                <h:commandButton rendered="#{otelBean.module.otel_id != null}"  styleClass="btn btn-info btn-block" value="Güncelle" action="#{otelBean.upload()}">
+                                    <f:ajax execute="otel-form" render="otel-form otel-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{otelBean.module.otel_id == null}" styleClass="btn btn-primary btn-block" value="Ekle" action="#{otelBean.upload()}">
+                                    <f:ajax execute="otel-form" render="otel-form otel-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{otelBean.module.otel_id != null}"  styleClass="btn btn-success btn-block" value="Form Temizle" action="#{otelBean.clearForm()}">
+                                    <f:ajax execute="@this" render="otel-form"/>
+                                </h:commandButton>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div id="myModal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <h:form id="delete-modal" >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Silme Onay İşlemi</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Bu otel nesnesini silmek istediğinizden emin misiniz? <br />
+                                        <b>Otel ID : </b>#{otelBean.module.otel_id}<br />
+                                        <b>Otel Adı :</b>#{otelBean.module.name}<br />
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-group">                                   
+                                        <h:commandButton onclick="$('#myModal').modal('hide')" action="#{otelBean.delete()}" value="Onayla" styleClass="btn btn-danger">
+                                            <f:ajax execute="@this" render="otel-table otel-form"/>
+                                        </h:commandButton> 
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>                      
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </h:form>
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+

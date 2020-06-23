@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/admin/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h:form id="user-table">
+                        <h:dataTable style="border-color: silver;border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px;" styleClass="table table-striped table-bordered table-hover" value="#{userBean.modulePageList}" var="user">
+                            <h:column>
+                                <f:facet name="header">Ad &amp; Soyad</f:facet>
+                                <h:commandLink action="#{userBean.updateForm(user)}" value="#{user.name_Surname}">
+                                    <f:ajax execute="@this" render="user-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Email</f:facet>
+                                <h:commandLink action="#{userBean.updateForm(user)}" value="#{user.email}">
+                                    <f:ajax execute="@this" render="user-form"/>
+                                </h:commandLink>                    
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Telefon No</f:facet>
+                                <h:commandLink action="#{userBean.updateForm(user)}" value="#{user.phone}">
+                                    <f:ajax execute="@this" render="user-form"/>
+                                </h:commandLink>                    
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Rol</f:facet>
+                                    #{user.role.role_Name}                    
+                            </h:column>                           
+                            <h:column>
+                                <f:facet name="header">Kampanyalar</f:facet>
+                                <ui:repeat value="#{user.kampanyaList}" var="kampanya">
+                                    <li style="margin-left: 1rem">#{kampanya.kampanya_adi}</li>
+                                </ui:repeat>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Rezervasyonlar</f:facet>
+                                <ui:repeat value="#{user.rezervasyonList}" var="rezervasyon">
+                                    <li style="margin-left: 1rem"><b>Tarih:</b> #{rezervasyon.tarih} &nbsp; <b>Tur:</b> #{rezervasyon.tur.guzergah}</li>
+                                </ui:repeat>
+                            </h:column>
+                             <h:column>
+                                <f:facet name="header">Biletler</f:facet>
+                                <ui:repeat value="#{user.biletList}" var="bilet">
+                                    <li style="margin-left: 1rem"> #{bilet.nereden} &nbsp;  #{bilet.nereye} &nbsp;  #{bilet.yontem} &nbsp;  #{bilet.tutar} </li>
+                                </ui:repeat>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Silme</f:facet>
+                                <h:commandButton onclick="$('#myModal').modal('show')"  styleClass="btn btn-sm btn-danger" action="#{userBean.deleteConfirm(user)}" value="SİL">
+                                    <f:ajax execute="@this" render="delete-modal"/>
+                                </h:commandButton> 
+                            </h:column>
+                            <f:facet name="footer">
+                                <div class="text-center">
+                                    <h:form>
+                                        <div class="btn-group">
+                                            <h:commandButton action="#{userBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="user-table"/>
+                                            </h:commandButton>
+                                            <h:commandButton action="#{userBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="user-table"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </f:facet>
+                        </h:dataTable>
+                    </h:form> 
+                </div>
+                <div class="col-md-4">
+                    <h:form id="user-form">
+                        <div class="form-group">
+                            <h:inputHidden value="#{userBean.module.id}" />
+                            <label for="inputName" >Ad &amp; Soyad</label>
+                            <h:inputText styleClass="form-control" value="#{userBean.module.name_Surname}"/>
+                            <br/>
+                            <label for="inputName" >Şifre</label>
+                            <h:inputSecret  styleClass="form-control" value="#{userBean.module.password}"/>
+                            <br/>
+                            <label for="inputName" >Email</label>
+                            <h:inputText id="inputEmail" styleClass="form-control" value="#{userBean.module.email}"/>
+                            <h:message showDetail="true" for="inputEmail" styleClass="text-danger" />
+                            <br/>
+                            <label for="inputName" >Telefon No</label>
+                            <h:inputText id="inputPhone" styleClass="form-control" value="#{userBean.module.phone}"/>
+                            <h:message showDetail="true" for="inputEmail" styleClass="text-danger" />
+                            <br/>
+                            <label for="SelectedRole" >Kullanıcı Rol</label><br/>
+                            <h:selectOneMenu  id="selectRole" value="#{userBean.module.role}" styleClass="form-control" converter="roleConverter">
+                                <f:selectItems value="#{userBean.roleBean.moduleList}" var="Role" itemValue="#{Role}" itemLabel="#{Role.role_Name}"/>
+                            </h:selectOneMenu >
+                            <br/>
+                            <label>Kampanyalar</label> 
+                            <h:selectManyListbox  styleClass="form-control"  value="#{userBean.module.kampanyaList}" converter="kampanyaConverter">
+                                <f:selectItems value="#{userBean.kampanyaBean.moduleList}" var="Kampanya" itemValue="#{Kampanya}" itemLabel="#{Kampanya.kampanya_adi}" />
+                            </h:selectManyListbox>
+                            
+                             <br/>
+                            <label>Biletler</label> 
+                            <h:selectManyListbox  styleClass="form-control"  value="#{userBean.module.biletList}" converter="biletConverter">
+                                <f:selectItems value="#{userBean.biletBean.moduleList}" var="Bilet" itemValue="#{Bilet}" itemLabel="#{Bilet.nereden}  #{Bilet.nereye} #{Bilet.yontem} #{Bilet.tutar}" />
+                            </h:selectManyListbox>
+                        </div>
+
+                        <div class="form-group">
+                            <h:commandButton rendered="#{userBean.module.id != null}"  styleClass="btn btn-block btn-info" value="Güncelle" action="#{userBean.update()}">
+                                <f:ajax execute="user-form" render="user-form user-table"/>
+                            </h:commandButton>
+                            <h:commandButton rendered="#{userBean.module.id == null}" styleClass="btn btn-block btn-primary" value="Ekle" action="#{userBean.create()}">
+                                <f:ajax execute="user-form" render="user-form user-table"/>
+                            </h:commandButton>
+                            <h:commandButton rendered="#{userBean.module.id != null}"  styleClass="btn btn-block btn-success" value="Form Temizle" action="#{userBean.clearForm()}">
+                                <f:ajax execute="@this" render="user-form"/>
+                            </h:commandButton>                     
+                        </div>
+                    </h:form>
+                </div>
+
+                <div id="myModal" class="modal" tabindex="-1" game="dialog">
+                    <div class="modal-dialog" game="document">
+                        <h:form id="delete-modal" >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Silme Onay İşlemi</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Bu kullanıcı nesnesini silmek istediğinizden emin misiniz? <br />
+                                        <b>Kullanıcı ID : </b>#{userBean.module.id}<br />
+                                        <b>Ad &amp; Soyad : </b>#{userBean.module.name_Surname}<br />
+                                        <b>Email : </b>#{userBean.module.email}<br />
+                                        <b>Rol Adı :</b>#{userBean.module.role.role_Name}<br />
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-group">
+                                        <h:form >
+                                            <h:commandButton onclick="$('#myModal').modal('hide')" action="#{userBean.delete()}" value="Onayla" styleClass="btn btn-danger">
+                                                <f:ajax execute="@this" render="user-form user-table"/>
+                                            </h:commandButton> 
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                                        </h:form>
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </h:form>
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/frontend/template/layout.xhtml">
+            <ui:define name="content">
+                <div class ="container">
+                    <div class="row">
+                        <h:form rendered="#{user.id!= null}"  id="fkampanya-detail">
+                            <h2 class="text-success" style="border-width: 3rem;border-color: #0275d8;border-left: solid;padding-left: 0.5rem;">Bilgileriniz</h2>
+                            <div class="col-sm-6 col-md-6" style="margin-bottom: 4rem">
+                                <b><h3 class="text-center">Kişisel Bilgiler</h3>  </b>
+                                <b><h4>Ad &amp; Soyad: </h4></b><p class="form-control">#{frontendUserBean.module.name_Surname}</p>
+                                <b><h4>Email: </h4></b><p class="form-control">#{frontendUserBean.module.email}</p>
+                                <b><h4>Telefon no: </h4></b><p class="form-control">#{frontendUserBean.module.phone}</p>
+                                <br/>
+                                <b><h3 class="text-center">Rezervasyonlar</h3>  </b>
+                                <ui:repeat value="#{frontendUserBean.module.rezervasyonList}" var="rezervasyon">
+                                    <b><h4>Rezervasyon Tarihi: </h4></b><p class="form-control">#{rezervasyon.tarih}</p>
+                                    <b><h4>Tur Tarihleri: </h4></b><p class="form-control">#{rezervasyon.tur.bas_tarih} ile #{rezervasyon.tur.son_tarih} arasında</p>
+                                    <b><h4>Tur Güzergah: </h4></b><p class="form-control">#{rezervasyon.tur.guzergah}</p>
+                                    <br/>
+                                </ui:repeat>
+                            </div>
+
+                            <div class="col-sm-6 col-md-6" style="margin-bottom: 4rem">
+                                <b><h3 class="text-center">Biletler</h3>  </b>
+                                <ui:repeat value="#{frontendUserBean.module.biletList}" var="bilet">
+                                    <b><h4>Bilet Yöntem: </h4></b><p class="form-control">#{bilet.yontem}</p>
+                                    <b><h4>Yol Güzergahı: </h4></b><p class="form-control">#{bilet.nereden} / #{bilet.nereye} </p>
+                                    <b><h4>Tutar </h4></b><p class="form-control">#{bilet.tutar} TL</p>
+                                     <br/> <br/>
+                                </ui:repeat>
+                                <br/>
+                                <b><h3 class="text-center">Kampanyalar</h3>  </b>
+                                <ui:repeat value="#{frontendUserBean.module.kampanyaList}" var="kampanya">
+                                    <b><h4>Kampanya Türü: </h4></b><p class="form-control">#{kampanya.tur}</p>
+                                    <b><h4>Kampanya Adı:</h4></b><p>#{kampanya.kampanya_adi} </p>
+                                    <b><h4>Kampanya İndirimi:</h4></b><p class="form-control">#{kampanya.ucret} TL</p>
+                                </ui:repeat>
+                            </div>
+                        </h:form>
+                    </div>               
+                </div>
+            </ui:define>
+        </ui:composition>           
+    </h:body>
+</html>
+
+

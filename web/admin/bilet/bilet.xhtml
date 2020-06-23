@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/admin/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h:form id="bilet-table">
+                        <h:dataTable style="border-color: silver;border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px;" styleClass="table table-striped table-bordered" value="#{biletBean.modulePageList}" var="bilet">
+                            <f:facet name="header">
+                                <div class="text-center">
+                                    <h:outputText class="text-info" value="BİLET KAYIT TABLOSU"/>
+                                </div>
+                            </f:facet>
+                            <h:column>
+                                <f:facet name="header">Bilet ID</f:facet>
+                                    #{bilet.bilet_id}                    
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Nereden</f:facet>
+                                <h:commandLink action="#{biletBean.updateForm(bilet)}" value="#{bilet.nereden}">
+                                    <f:ajax execute="@this" render="bilet-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Nereye</f:facet>
+                                <h:commandLink action="#{biletBean.updateForm(bilet)}" value="#{bilet.nereye}">
+                                    <f:ajax execute="@this" render="bilet-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Yöntem</f:facet>
+                                <h:commandLink action="#{biletBean.updateForm(bilet)}" value="#{bilet.yontem}">
+                                    <f:ajax execute="@this" render="bilet-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Tutar</f:facet>
+                                <h:commandLink action="#{biletBean.updateForm(bilet)}" value="#{bilet.tutar}">
+                                    <f:ajax execute="@this" render="bilet-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Silme</f:facet>
+                                <h:commandButton onclick="$('#myModal').modal('show')"  styleClass="btn btn-sm btn-danger" action="#{biletBean.deleteConfirm(bilet)}" value="SİL">
+                                    <f:ajax execute="@this" render="delete-modal"/>
+                                </h:commandButton> 
+                            </h:column>
+                            <f:facet name="footer">
+                                <div class="text-center">
+                                    <h:form>
+                                        <div class="btn-group">
+                                            <h:commandButton action="#{biletBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="bilet-table"/>
+                                            </h:commandButton>
+                                            <h:commandButton action="#{biletBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="bilet-table"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </f:facet>
+                        </h:dataTable>
+                    </h:form> 
+                </div>
+                <div class="col-md-4">
+                    <h:form id="bilet-form">
+                        <div class="form-group">
+                            <h:inputHidden value="#{biletBean.module.bilet_id}" />
+                            <label for="inputName" >Nereden</label>
+                            <h:inputText styleClass="form-control" value="#{biletBean.module.nereden}"/>
+                            <br/>
+                            <label for="inputName" >Nereye</label>
+                            <h:inputText styleClass="form-control" value="#{biletBean.module.nereye}"/>
+                            <br/>
+                            <label for="inputName" >Yöntem</label>
+                            <h:selectOneMenu   value="#{biletBean.module.yontem}" styleClass="form-control" >
+                                <f:selectItem  itemValue="Uçak" itemLabel="Uçak"/>
+                                <f:selectItem  itemValue="Otobüs" itemLabel="Otobüs"/>
+                            </h:selectOneMenu >
+                            <br/>
+                            <label for="inputName" >Tutar</label>
+                            <h:inputText styleClass="form-control" value="#{biletBean.module.tutar}"/>
+                            <br/>
+                        </div>
+                        <div class="form-group">
+                                <h:commandButton rendered="#{biletBean.module.bilet_id != null}"  styleClass="btn btn-info btn-block " value="Güncelle" action="#{biletBean.update()}">
+                                    <f:ajax execute="bilet-form" render="bilet-form bilet-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{biletBean.module.bilet_id == null}" styleClass="btn btn-primary btn-block " value="Ekle" action="#{biletBean.create()}">
+                                    <f:ajax execute="bilet-form" render="bilet-form bilet-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{biletBean.module.bilet_id != null}"  styleClass="btn btn-success btn-block" value="Form Temizle" action="#{biletBean.clearForm()}">
+                                    <f:ajax execute="@this" render="bilet-form"/>
+                                </h:commandButton>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div id="myModal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <h:form id="delete-modal" >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Silme Onay İşlemi</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Bu bilet nesnesini silmek istediğinizden emin misiniz? <br />
+                                        <b>Bilet ID : </b>#{biletBean.module.bilet_id}<br />
+                                        <b>Nereden :</b>#{biletBean.module.nereden}<br />
+                                        <b>Nereye :</b>#{biletBean.module.nereye}<br />
+                                        <b>Yöntem :</b>#{biletBean.module.yontem}<br />
+                                        <b>Tutar :</b>#{biletBean.module.tutar}<br />
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-group">                                   
+                                        <h:commandButton onclick="$('#myModal').modal('hide')" action="#{biletBean.delete()}" value="Onayla" styleClass="btn btn-danger">
+                                            <f:ajax execute="@this" render="bilet-table bilet-form"/>
+                                        </h:commandButton> 
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>                      
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </h:form>
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+

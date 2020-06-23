@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/admin/template/layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+    <ui:define name="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h:form enctype="multipart/form-data" id="tur-table">
+                        <h:dataTable style="border-color: silver;border-bottom-width: 2px;border-top-width: 2px;border-left-width: 2px;border-right-width: 2px;" styleClass="table table-striped table-bordered" value="#{turBean.modulePageList}" var="tur">
+                             <f:facet name="header">
+                                <div class="text-center">
+                                    <h:outputText class="text-info" value="TUR KAYIT TABLOSU"/>
+                                </div>
+                            </f:facet>
+                            <h:column>
+                                <f:facet name="header">Güzergah</f:facet>
+                                <h:outputText   value="#{tur.guzergah}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Kapasite</f:facet>
+                                <h:commandLink action="#{turBean.updateForm(tur)}" value="#{tur.kapasite}">
+                                    <f:ajax execute="@this" render="tur-form"/>
+                                </h:commandLink>
+                            </h:column>
+                             <h:column>
+                                <f:facet name="header">Ücret</f:facet>
+                                <h:commandLink action="#{turBean.updateForm(tur)}" value="#{tur.ucret}">
+                                    <f:ajax execute="@this" render="tur-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Başlangıç Tarihi</f:facet>
+                                <h:commandLink action="#{turBean.updateForm(tur)}" value="#{tur.bas_tarih}">
+                                    <f:ajax execute="@this" render="tur-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Bitiş Tarihi</f:facet>
+                                <h:commandLink action="#{turBean.updateForm(tur)}" value="#{tur.son_tarih}">
+                                    <f:ajax execute="@this" render="tur-form"/>
+                                </h:commandLink>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Tur Resmi </f:facet>
+                                <h:panelGroup  rendered="#{tur.dosya.type.contains('image')}">
+                                    <h:graphicImage value="image/#{tur.dosya.name}" width="50" height="50"/>
+                                </h:panelGroup>               
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Silme</f:facet>
+                                <h:commandButton onclick="$('#myModal').modal('show')"  styleClass="btn btn-sm btn-danger" action="#{turBean.deleteConfirm(tur)}" value="SİL">
+                                    <f:ajax execute="@this" render="delete-modal"/>
+                                </h:commandButton> 
+                            </h:column>
+                            <f:facet name="footer">
+                                <div class="text-center">
+                                    <h:form>
+                                        <div class="btn-group">
+                                            <h:commandButton action="#{turBean.previous()}" value="ÖNCEKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="tur-table"/>
+                                            </h:commandButton>
+                                            <h:commandButton action="#{turBean.next()}" value="SONRAKİ" styleClass="btn btn-info">
+                                                <f:ajax execute="@this" render="tur-table"/>
+                                            </h:commandButton>
+                                        </div>
+                                    </h:form>
+                                </div>
+                            </f:facet>
+                        </h:dataTable>
+                    </h:form> 
+                </div>
+                <div class="col-md-3">
+                    <h:form id="tur-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <h:inputHidden value="#{turBean.module.tur_id}" />
+                            <label for="inputName" >Güzergah</label>
+                            <h:inputTextarea cols="30" rows="5" styleClass="form-control" value="#{turBean.module.guzergah}"/>
+                            <br/>
+                            <label for="inputName" >Kapasite</label>
+                            <h:inputText styleClass="form-control" value="#{turBean.module.kapasite}"/>
+                            <br/>
+                            <label for="inputName" >Ücret</label>
+                            <h:inputText styleClass="form-control" value="#{turBean.module.ucret}"/>
+                            <br/>
+                            <label for="inputName" >Başlangıç Tarih</label>
+                            <h:inputText value="#{turBean.module.bas_tarih}" styleClass="form-control" a:placeholder="yyyy-MM-dd" >
+                                <f:convertDateTime pattern="yyyy-MM-dd"/>  
+                            </h:inputText>
+                            <br/>
+                            <label for="inputName" >Bitiş Tarih</label>
+                            <h:inputText value="#{turBean.module.son_tarih}" styleClass="form-control" a:placeholder="yyyy-MM-dd" >
+                                <f:convertDateTime pattern="yyyy-MM-dd"/>  
+                            </h:inputText>
+                            <br/>
+                            <label for="selectResim" >Tur Resmi</label>
+                            <h:inputFile value="#{turBean.part}" styleClass="form-control"/> 
+                        </div>
+                        <div class="form-group">
+                                <h:commandButton rendered="#{turBean.module.tur_id != null}"  styleClass="btn btn-info btn-block" value="Güncelle" action="#{turBean.upload()}">
+                                    <f:ajax execute="tur-form" render="tur-form tur-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{turBean.module.tur_id == null}" styleClass="btn btn-primary btn-block" value="Ekle" action="#{turBean.upload()}">
+                                    <f:ajax execute="tur-form" render="tur-form tur-table"/>
+                                </h:commandButton>
+                                <h:commandButton rendered="#{turBean.module.tur_id != null}"  styleClass="btn btn-success btn-block" value="Form Temizle" action="#{turBean.clearForm()}">
+                                    <f:ajax execute="@this" render="tur-form"/>
+                                </h:commandButton>
+                        </div>
+                    </h:form>
+                </div>
+
+                <div id="myModal" class="modal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <h:form id="delete-modal" >
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Silme Onay İşlemi</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        Bu tur nesnesini silmek istediğinizden emin misiniz? <br />
+                                        <b>Tur ID : </b>#{turBean.module.tur_id}<br />
+                                        <b>Güzergah :</b>#{turBean.module.guzergah}<br />
+                                        <b>Kapasite :</b>#{turBean.module.kapasite}<br />
+                                        <b>Başlangıç Tarihi :</b>#{turBean.module.bas_tarih}<br />
+                                        <b>Bitiş Tarihi :</b>#{turBean.module.son_tarih}<br />
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="btn-group">                                   
+                                        <h:commandButton onclick="$('#myModal').modal('hide')" action="#{turBean.delete()}" value="Onayla" styleClass="btn btn-danger">
+                                            <f:ajax execute="@this" render="tur-table tur-form"/>
+                                        </h:commandButton> 
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>                      
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </h:form>
+                    </div><!-- /.modal-dialog -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+
