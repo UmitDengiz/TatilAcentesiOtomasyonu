@@ -1,3 +1,7 @@
+
+CREATE DATABASE tatil_otomasyonu CHARACTER SET utf8 COLLATE utf8_general_ci;
+use tatil_otomasyonu;
+
 -- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
 -- Host: localhost    Database: tatil_otomasyonu
